@@ -1,9 +1,68 @@
 .active-clause-coverage {
-    margin: 20px auto;
-    max-width: 800px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
   }
   
-  .truth-table {
+  
+.predicate-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.generate-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.generate-btn:hover {
+  background-color: #45a049;
+}
+
+.generate-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.reset-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background-color: #da190b;
+}
+
+.error-message {
+  color: #f44336;
+  margin-top: 10px;
+}
+
+.truth-table, .clause-pairs {
+  margin-top: 20px;
+}
+
+
+.truth-table table, .clause-pairs ul {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.truth-table {
     margin-top: 20px;
   }
   
@@ -11,6 +70,13 @@
     width: 100%;
     border-collapse: collapse;
   }
+
+  .truth-table th, .truth-table td, .clause-pairs li {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
   
   .truth-table th,
   .truth-table td {
@@ -32,24 +98,24 @@
     background-color: #dddddd;
   }
   
-  .clause-pairs {
-    margin-top: 20px;
+   .clause-pairs ul {
+    list-style: none;
   }
   
-  .clause-pairs ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
-  
-  .clause-pairs li {
+  .clause-pairs ul li {
     margin-bottom: 10px;
   }
   
-  .clause-pairs li ul {
-    list-style-type: none;
-    padding-left: 20px;
+  .clause-pairs ul li ul {
+    margin-top: 5px;
+  }
+
+  .clause-pairs-container {
+    margin-top: 20px;
+    text-align: center; /* Center the content horizontally */
   }
   
-  .clause-pairs li ul li {
-    margin-bottom: 5px;
+  .clause-pairs {
+    display: inline-block; /* Display as inline block to center horizontally */
+    text-align: left; /* Reset text alignment */
   }
