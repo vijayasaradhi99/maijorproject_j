@@ -21,6 +21,7 @@ function App() {
     </tr> 
 
 	</tbody></table>
+	<h5>Welcome! Please utilize the text box below to input your logical expression, adhering to the specified logic operators mentioned above. Variable names can be customized as per your requirement. Additionally, feel free to include parentheses for better expression organization</h5>
       <TruthTable />
       <ActiveClauseCoverage />
     </div>
