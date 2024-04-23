@@ -10,15 +10,16 @@ const ActiveClauseCoverage = () => {
   const [clausePairsGenerated, setClausePairsGenerated] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  
   const handleChange = (event) => {
     const { value } = event.target;
     if (!value.trim()) {
       setPredicate(value);
-      setErrorMessage(null);
+      setErrorMessage('Predicate cannot be empty');
     } else {
-      const invalidChars = value.match(/[^a-zA-Z0-9()&|!= ]|(?<![a-zA-Z0-9])[0-9]+(?![a-zA-Z])/g); // Updated regex to include '='
-      if (invalidChars) {
-        const errorMessage = `Invalid character(s): ${invalidChars.join(', ')}`;
+        const invalidChars = value.match(/[^a-zA-Z0-9()&|!=^ ]|(?<![a-zA-Z0-9])[0-9]+(?![a-zA-Z])/g); // Updated regex to include '^'
+        if (invalidChars) {
+        const errorMessage = Invalid character(s): ${invalidChars.join(', ')};
         setPredicate(value);
         setErrorMessage(errorMessage);
       } else {
@@ -28,40 +29,68 @@ const ActiveClauseCoverage = () => {
     }
   };
 
-  // Function to generate the truth table based on the predicate equation
-  const generateTruthTable = () => {
+  
+
+
+
+const generateTruthTable = () => {    
     if (!predicate.trim()) {
-      setErrorMessage('Please enter a predicate equation.');
-      return;
-    }
-
-    try {
-      const variables = predicate.match(/[a-zA-Z]/g) || [];
-      setVars(variables); // Update variables state
-
-      const numRows = Math.pow(2, variables.length);
-      const table = [];
-
-      for (let i = 0; i < numRows; i++) {
-        const row = { 'Row No': i + 1 };
-        variables.forEach((variable, index) => {
-          row[variable] = (i >> index) & 1;
-        });
-
-        // Replace variables in predicate with their respective values from the row
-        const result = eval(predicate.replace(/[a-zA-Z]/g, match => row[match]).replace('=', '===')); // Handling equivalence operator
-        row['Result'] = result;
-        table.push(row);
+        setErrorMessage('Please enter a predicate equation.');
+        setTruthTableGenerated(false); // Reset truthTableGenerated state
+        return;
       }
-
-      setTruthTable(table); // Update truth table state
-      setTruthTableGenerated(true); // Update truthTableGenerated state
-      setClausePairsGenerated(false); // Reset clausePairsGenerated state
-      setErrorMessage(''); // Clear error message
-    } catch (error) {
-      setErrorMessage('Error generating truth table. Please check your predicate equation.');
-    }
+    
+      // Check for invalid symbols or operators
+  const invalidSymbols = predicate.match(/[^a-zA-Z0-9()&|!=^ ]/g);
+  if (invalidSymbols) {
+    setErrorMessage(Invalid symbol(s): ${invalidSymbols.join(', ')});
+    return;
+  }
+      // Check if predicate contains only numerals
+      const onlyNumerals = /^\d+$/.test(predicate.replace(/\s/g, ''));
+      if (onlyNumerals) {
+        setErrorMessage('Predicate cannot contain only numerals.');
+        setTruthTableGenerated(false); // Reset truthTableGenerated state
+        return;
+      }
+    
+      // Check if variables start with alphabets
+      const invalidVars = predicate.match(/\b\d+\w*\b/g);
+      if (invalidVars) {
+        setErrorMessage(Variables must start with alphabets: ${invalidVars.join(', ')});
+        setTruthTableGenerated(false); // Reset truthTableGenerated state
+        return;
+      }
+    
+      try {
+        const variables = predicate.match(/[a-zA-Z]\w*/g) || [];
+        setVars(variables); // Update variables state
+    
+        const numRows = Math.pow(2, variables.length);
+        const table = [];
+    
+        for (let i = 0; i < numRows; i++) {
+          const row = { 'Row No': i + 1 };
+          variables.forEach((variable, index) => {
+            row[variable] = (i >> index) & 1;
+          });
+    
+          // Replace variables in predicate with their respective values from the row
+          const result = eval(predicate.replace(/[a-zA-Z]\w*/g, match => row[match]).replace('=', '===')); // Handling equivalence operator
+          row['Result'] = result;
+          table.push(row);
+        }
+    
+        setTruthTable(table); // Update truth table state
+        setTruthTableGenerated(true); // Update truthTableGenerated state
+        setClausePairsGenerated(false); // Reset clausePairsGenerated state
+        setErrorMessage(''); // Clear error message
+      } catch (error) {
+        setErrorMessage('Error generating truth table. Please check your predicate equation.');
+        setTruthTableGenerated(false); // Reset truthTableGenerated state
+      }
   };
+  
 
   // Function to generate clause pairs based on the truth table
   const generateClausePairs = () => {
@@ -135,6 +164,7 @@ const evaluateExpression = (expr, row) => {
   
     // Replace equivalence operator (=) with equality check
     expressionCopy = expressionCopy.replaceAll('=', '==');
+    
   
     // Replace logical operators with JavaScript equivalents
     expressionCopy = expressionCopy
@@ -166,10 +196,11 @@ const evaluateExpression = (expr, row) => {
         value={predicate}
         onChange={handleChange}
         placeholder="Enter predicate equation"
+        className="predicate-input"
       />
-      <button onClick={generateTruthTable}>Generate Truth Table</button>
-      <button onClick={generateClausePairs} disabled={!truthTableGenerated}>Generate Clause Pairs</button>
-      <button onClick={resetState}>Reset</button>
+      <button onClick={generateTruthTable} className="generate-btn">Generate Truth Table</button>
+      <button onClick={generateClausePairs} disabled={!truthTableGenerated} className="generate-btn">Generate Clause Pairs</button>
+      <button onClick={resetState} className="reset-btn">Reset</button>
       
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       
@@ -178,7 +209,7 @@ const evaluateExpression = (expr, row) => {
         <table>
           <thead>
             <tr>
-              <th>Row No</th>
+              <th>Row</th>
               {vars.map((variable) => (
                 <th key={variable}>{variable}</th>
               ))}
@@ -199,24 +230,36 @@ const evaluateExpression = (expr, row) => {
         </table>
       </div>
 
-      <div className="clause-pairs">
-        <h3>Clause Pairs</h3>
-        <ul>
-          {clausePairs.map((pairList, index) => (
-            <li key={index}>
-              Variable {vars[index]}:
-              <ul>
-                {pairList.map((pair, idx) => (
-                  <React.Fragment key={idx}>
-                    {idx > 0 && ", "} 
-                    ({pair[0] + 1}, {pair[1] + 1})
-                  </React.Fragment>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </div>
+  
+      <div className="clause-pairs-container">
+<div className="clause-pairs">
+  <h3>Clause Pairs</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Pairs</th>
+      </tr>
+    </thead>
+    <tbody>
+      {clausePairs.map((pairList, index) => (
+        <tr key={index}>
+          <td>{vars[index]}</td>
+          <td>
+            {pairList.map((pair, idx) => (
+              <React.Fragment key={idx}>
+                {idx > 0 && ", "}
+                ({pair[0] + 1}, {pair[1] + 1})
+              </React.Fragment>
+            ))}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+</div>
     </div>
   );
 };
