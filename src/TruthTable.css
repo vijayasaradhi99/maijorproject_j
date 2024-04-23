@@ -1,8 +1,43 @@
 .truth-table-container {
-    margin: 20px auto;
-    max-width: 600px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
   }
   
+  
+.predicate-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.coverage-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reset-button {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
   .truth-table {
     width: 100%;
     border-collapse: collapse;
